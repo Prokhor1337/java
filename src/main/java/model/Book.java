@@ -2,14 +2,13 @@ package model;
 
 public class Book {
     private String title;
-    String author; // default (package-private)
+    String author;
     protected int year;
     public boolean isAvailable;
 
     public static int totalBooks = 0;
     public final int id;
 
-    // Конструктор 1: без параметрів
     public Book() {
         this.title = "Невідома назва";
         this.author = "Невідомий автор";
@@ -20,7 +19,6 @@ public class Book {
         this.id = totalBooks;
     }
 
-    // Конструктор 2: з параметрами (використовує this для розділення імені поля і параметра)
     public Book(String title, String author, int year, boolean isAvailable) {
         this.title = title;
         this.author = author;
@@ -31,7 +29,6 @@ public class Book {
         this.id = totalBooks;
     }
 
-    // Конструктор 3: викликає інший конструктор через this(...)
     public Book(String title, String author) {
         this(title, author, 2026, true);
     }
