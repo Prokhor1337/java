@@ -1,5 +1,4 @@
 target/
-*.iml
 .idea/
-.vscode/
 *.class
+lab1_report.docx
