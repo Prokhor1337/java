@@ -1,5 +1,3 @@
-package com.example;
-
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -7,35 +5,34 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        // Забезпечення коректного кодування UTF-8 для введення та виведення
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
         Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
         scanner.useLocale(Locale.US);
 
         while (true) {
-            System.out.println("=== Конвертер довжини ===");
-            System.out.println("Введіть 1 для конвертації, або 0 для виходу");
+            System.out.println("Конвертер довжини");
+            System.out.println("1 - конвертація, 0 - вихід");
             System.out.print("Вибір: ");
 
             if (!scanner.hasNextInt()) {
-                System.out.println("-> Помилка: введіть число (0 або 1). Спробуйте ще раз.\n");
-                scanner.next(); // Очищуємо некоректне введення
+                System.out.println("Помилка: введіть число.\n");
+                scanner.next();
                 continue;
             }
             int choice = scanner.nextInt();
             
             if (choice == 0) {
-                System.out.println("-> Вихід. Дякуємо за використання!");
+                System.out.println("Вихід.");
                 break;
             } else if (choice != 1) {
-                System.out.println("-> Помилка: невідомий вибір. Спробуйте ще раз.\n");
+                System.out.println("Помилка: невідомий вибір.\n");
                 continue;
             }
 
             System.out.print("Значення: ");
             if (!scanner.hasNextDouble()) {
-                System.out.println("-> Помилка: введіть число. Спробуйте ще раз.\n");
-                scanner.next(); // Очищуємо некоректне введення
+                System.out.println("Помилка: введіть число.\n");
+                scanner.next();
                 continue;
             }
             double value = scanner.nextDouble();
@@ -46,25 +43,15 @@ public class Main {
             System.out.print("У (mm/cm/m/km/mile): ");
             String toUnit = scanner.next().toLowerCase();
 
-            double valueInMeters = toMeters(value, fromUnit);
-            if (valueInMeters == -1.0 && !fromUnit.equals("m") && value != -1.0) { // Проста перевірка на помилку
-                if (!(value == -1.0 && fromUnit.equals("m"))) {
-                    // Якщо toMeters повернуло -1.0 і це не був конверт "-1.0 m"
-                    System.out.println("-> Помилка: невідома вихідна одиниця вимірювання.\n");
-                    continue;
-                }
-            }
-            
-            // Кращий спосіб обробки помилок одиниць вимірювання
             if (!isValidUnit(fromUnit) || !isValidUnit(toUnit)) {
-                System.out.println("-> Помилка: невідома одиниця вимірювання. Спробуйте ще раз.\n");
+                System.out.println("Помилка: невідома одиниця вимірювання.\n");
                 continue;
             }
 
-            valueInMeters = toMetersSafely(value, fromUnit);
+            double valueInMeters = toMetersSafely(value, fromUnit);
             double result = fromMetersSafely(valueInMeters, toUnit);
 
-            System.out.printf("-> %s %s = %s %s\n\n", 
+            System.out.printf("%s %s = %s %s\n\n", 
                 formatDouble(value), fromUnit, formatDouble(result), toUnit);
         }
         scanner.close();
@@ -95,11 +82,6 @@ public class Main {
             case "mile": return valueInMeters / 1609.344;
             default: return 0;
         }
-    }
-    
-    // Старий метод залишено для сумісності з попередньою логікою, але не використовується
-    private static double toMeters(double value, String unit) {
-        return toMetersSafely(value, unit);
     }
     
     private static String formatDouble(double value) {
