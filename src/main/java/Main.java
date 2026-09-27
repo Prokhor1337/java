@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
         Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
@@ -43,7 +44,7 @@ public class Main {
             System.out.print("У (mm/cm/m/km/mile): ");
             String toUnit = scanner.next().toLowerCase();
 
-            if (!isValidUnit(fromUnit) || !isValidUnit(toUnit)) {
+            if (isInvalidUnit(fromUnit) || isInvalidUnit(toUnit)) {
                 System.out.println("Помилка: невідома одиниця вимірювання.\n");
                 continue;
             }
@@ -57,31 +58,31 @@ public class Main {
         scanner.close();
     }
 
-    private static boolean isValidUnit(String unit) {
-        return unit.equals("mm") || unit.equals("cm") || unit.equals("m") || 
-               unit.equals("km") || unit.equals("mile");
+    private static boolean isInvalidUnit(String unit) {
+        return !unit.equals("mm") && !unit.equals("cm") && !unit.equals("m") && 
+               !unit.equals("km") && !unit.equals("mile");
     }
 
     private static double toMetersSafely(double value, String unit) {
-        switch (unit) {
-            case "mm": return value / 1000.0;
-            case "cm": return value / 100.0;
-            case "m": return value;
-            case "km": return value * 1000.0;
-            case "mile": return value * 1609.344;
-            default: return 0;
-        }
+        return switch (unit) {
+            case "mm" -> value / 1000.0;
+            case "cm" -> value / 100.0;
+            case "m" -> value;
+            case "km" -> value * 1000.0;
+            case "mile" -> value * 1609.344;
+            default -> 0;
+        };
     }
 
     private static double fromMetersSafely(double valueInMeters, String unit) {
-        switch (unit) {
-            case "mm": return valueInMeters * 1000.0;
-            case "cm": return valueInMeters * 100.0;
-            case "m": return valueInMeters;
-            case "km": return valueInMeters / 1000.0;
-            case "mile": return valueInMeters / 1609.344;
-            default: return 0;
-        }
+        return switch (unit) {
+            case "mm" -> valueInMeters * 1000.0;
+            case "cm" -> valueInMeters * 100.0;
+            case "m" -> valueInMeters;
+            case "km" -> valueInMeters / 1000.0;
+            case "mile" -> valueInMeters / 1609.344;
+            default -> 0;
+        };
     }
     
     private static String formatDouble(double value) {
