@@ -37,5 +37,11 @@ public class Main {
         } catch (IllegalArgumentException e) {
             System.out.println("спроба додати позицію з ціною -10 -> відхилено");
         }
+
+        try {
+            item1.setQuantity(-5);
+        } catch (IllegalArgumentException e) {
+            System.out.printf(Locale.US, "спроба встановити кількість -5 для позиції #%d -> відхилено%n", item1.getId());
+        }
     }
 }

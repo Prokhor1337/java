@@ -24,6 +24,7 @@ public class Order {
         }
         item.internalValidate();
         items.add(item);
+        internalAudit();
     }
 
     public List<OrderItem> getItems() {
