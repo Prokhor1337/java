@@ -18,6 +18,6 @@ public class Employee {
     }
 
     public void work() {
-        System.out.println(name + " виконує базові робочі обов'язки.");
+        System.out.println(name + " працює");
     }
 }

@@ -2,26 +2,20 @@ package model;
 
 public class Developer extends Employee {
     public String position = "Розробник";
-    private final String specialty;
 
-    public Developer(String name, String specialty) {
+    public Developer(String name) {
         super(name);
         System.out.println("-> [Developer] конструктор");
-        this.specialty = specialty;
-    }
-
-    public String getSpecialty() {
-        return specialty;
     }
 
     @Override
     public String describe() {
-        return "Розробник " + getName() + " (спеціалізація: " + specialty + ")";
+        return "Розробник " + getName();
     }
 
     @Override
     public void work() {
         super.work();
-        System.out.println(getName() + " пише та тестує код (" + specialty + ").");
+        System.out.println(getName() + " пише код");
     }
 }
