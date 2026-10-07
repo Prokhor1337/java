@@ -1,0 +1,41 @@
+<mxfile host="app.diagrams.net" modified="2026-10-07T13:00:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="pract3-diagram" name="Ієрархія класів та конструктори">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Employee Base Class -->
+        <mxCell id="emp" value="&lt;b&gt;Employee&lt;/b&gt;&lt;br&gt;«Базовий клас»&lt;hr&gt;+ position: String = &quot;Працівник&quot;&lt;br&gt;- name: String&lt;hr&gt;+ work()&lt;br&gt;+ describe()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=1;arcSize=10;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="40" width="260" height="130" as="geometry" />
+        </mxCell>
+        
+        <!-- Manager Derived Class -->
+        <mxCell id="mgr" value="&lt;b&gt;Manager&lt;/b&gt;&lt;br&gt;«Похідний клас»&lt;hr&gt;+ position: String = &quot;Менеджер&quot;&lt;hr&gt;+ work() [super.work()]&lt;br&gt;+ describe()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#d5e8d4;strokeColor=#82b366;rounded=1;arcSize=10;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="270" width="240" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Developer Derived Class -->
+        <mxCell id="dev" value="&lt;b&gt;Developer&lt;/b&gt;&lt;br&gt;«Похідний клас»&lt;hr&gt;+ position: String = &quot;Розробник&quot;&lt;hr&gt;+ work() [super.work()]&lt;br&gt;+ describe()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=#d5e8d4;strokeColor=#82b366;rounded=1;arcSize=10;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="270" width="240" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Inheritance arrow Manager -> Employee -->
+        <mxCell id="edge1" value="extends" style="endArrow=block;endSize=12;endFill=0;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="mgr" target="emp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Inheritance arrow Developer -> Employee -->
+        <mxCell id="edge2" value="extends" style="endArrow=block;endSize=12;endFill=0;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="dev" target="emp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Order call banner -->
+        <mxCell id="banner" value="&lt;b&gt;Порядок виклику конструкторів:&lt;/b&gt; 1. [Employee] (базовий) → 2. [Manager] / [Developer] (похідний)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#664D03;" vertex="1" parent="1">
+          <mxGeometry x="140" y="420" width="520" height="40" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
