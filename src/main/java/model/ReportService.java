@@ -1,5 +1,6 @@
 package model;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class ReportService {
     private final ReportFormatter formatter;
 

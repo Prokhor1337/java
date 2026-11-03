@@ -2,6 +2,7 @@ package app;
 
 import model.Circle;
 import model.Drawable;
+import model.Rectangle;
 import model.ReportService;
 import model.Scalable;
 import model.Shape;
@@ -22,11 +23,20 @@ public class Main {
         Circle circle = new Circle(3.0);
         Drawable d = circle;
         d.draw();
+        System.out.println("Через Drawable: " + d.describe());
 
         Scalable s = circle;
         s.scale(2.0);
         System.out.printf("Радіус після масштабування: %.2f%n", circle.getRadius());
-        System.out.println("Опис: " + circle.describe());
+        System.out.println("Через Scalable: " + s.describe());
+
+        System.out.println();
+        Rectangle rectangle = new Rectangle(4.0, 6.0);
+        System.out.printf("Прямокутник: %s, площа: %.2f (розмір: %.2f x %.2f)%n",
+                rectangle.getName(), rectangle.area(), rectangle.getWidth(), rectangle.getHeight());
+        rectangle.draw();
+        rectangle.scale(1.5);
+        System.out.println("Опис прямокутника: " + rectangle.describe());
 
         System.out.println();
         ReportService textReportService = new ReportService(new TextFormatter());
