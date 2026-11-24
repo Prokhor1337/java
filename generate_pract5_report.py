@@ -109,30 +109,25 @@ def create_report(output_path):
     # Дослід 1
     add_p("1. Перевірювані та неперевірювані винятки, порядок catch, finally", font_size=12, bold=True, space_after=Pt(4))
     
-    add_p("1.1. Виклик методу з перевірюваним винятком без обробки:", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("FileReader reader = new FileReader(\"data.txt\");")
-    add_p("Реакція компілятора javac:", font_size=12, italic=True, space_after=Pt(2))
-    add_code_block("error: unreported exception FileNotFoundException; must be caught or declared to be thrown\n        FileReader reader = new FileReader(\"data.txt\");\n                            ^")
-    add_p("Пояснення: FileNotFoundException належить до перевірюваних винятків. Компілятор зобов'язує розробника або обробити його через try-catch, або задекларувати у сигнатурі методу через throws.", font_size=12, space_after=Pt(6))
+    add_p("1.1. Обробка перевірюваного винятку (Checked Exception) через try-catch:", font_size=12, bold=True, space_after=Pt(2))
+    add_code_block("try (FileReader reader = new FileReader(\"non_existing_file.txt\")) {\n    int charCode = reader.read();\n    System.out.println(\"Прочитано символ: \" + charCode);\n} catch (FileNotFoundException e) {\n    System.out.println(\"Перехоплено FileNotFoundException: \" + e.getMessage());\n} catch (IOException e) {\n    System.out.println(\"Перехоплено IOException: \" + e.getMessage());\n}")
+    add_p("Пояснення: FileNotFoundException належить до перевірюваних винятків (checked exception). Компілятор Java вимагає обов'язкової наявності конструкції try-catch або оголошення throws у сигнатурі методу.", font_size=12, space_after=Pt(6))
 
-    add_p("1.2. Обробка через try-catch та через throws:", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("try {\n    FileReader reader = new FileReader(\"grades.txt\");\n} catch (FileNotFoundException e) {\n    System.out.println(e.getMessage());\n}\n\npublic void openGradeFileWithThrows(String fileName) throws FileNotFoundException {\n    new FileReader(fileName);\n}")
-    add_p("Пояснення: При try-catch виняток обробляється локально. При throws метод делегує виняток викликаючому коду вище за стеком викликів.", font_size=12, space_after=Pt(6))
+    add_p("1.2. Оголошення перевірюваного винятку через throws у сигнатурі методу:", font_size=12, bold=True, space_after=Pt(2))
+    add_code_block("public void openGradeFileWithThrows(String fileName) throws FileNotFoundException {\n    FileReader reader = new FileReader(fileName);\n    try {\n        reader.close();\n    } catch (IOException ignored) {\n    }\n}")
+    add_p("Пояснення: За допомогою ключового слова throws метод делегує обробку винятку нагору за стеком викликів тому методу, який його викликає.", font_size=12, space_after=Pt(6))
 
-    add_p("1.3. Неперевірюваний виняток (Unchecked Exception):", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("int[] sampleGrades = {95, 88, 74};\nint invalidIndex = sampleGrades.length + 2;\nint invalidAccess = sampleGrades[invalidIndex];")
-    add_p("Спостереження: Код компілюється без помилок, оскільки ArrayIndexOutOfBoundsException є нащадком RuntimeException. Під час виконання виникає аварійне завершення:", font_size=12, space_after=Pt(2))
-    add_code_block("Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 3")
+    add_p("1.3. Робота з неперевірюваним винятком (Unchecked Exception):", font_size=12, bold=True, space_after=Pt(2))
+    add_code_block("try {\n    int[] sampleGrades = {95, 88, 74};\n    int invalidIndex = sampleGrades.length + 2;\n    int invalidAccess = sampleGrades[invalidIndex];\n    System.out.println(\"Оцінка: \" + invalidAccess);\n} catch (ArrayIndexOutOfBoundsException e) {\n    System.out.println(\"Перехоплено ArrayIndexOutOfBoundsException: \" + e.getMessage());\n}")
+    add_p("Пояснення: ArrayIndexOutOfBoundsException успадкований від RuntimeException і є неперевірюваним. Компілятор не вимагає обов'язкового блоку try-catch чи throws, проте за некоректних даних помилка виникає під час виконання програми.", font_size=12, space_after=Pt(6))
 
-    add_p("1.4. Неправильний порядок блоків catch:", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("try {\n    FileReader reader = new FileReader(\"data.txt\");\n} catch (Exception e) {\n    System.out.println(e.getMessage());\n} catch (IOException e) {\n    System.out.println(e.getMessage());\n}")
-    add_p("Реакція компілятора javac:", font_size=12, italic=True, space_after=Pt(2))
-    add_code_block("error: exception IOException has already been caught\n        } catch (IOException e) {\n          ^")
-    add_p("Пояснення: Блок catch (Exception e) перехоплює всі винятки, тому розташований нижче блок catch (IOException e) є недосяжним кодом (unreachable code).", font_size=12, space_after=Pt(6))
+    add_p("1.4. Правильний порядок розміщення блоків catch:", font_size=12, bold=True, space_after=Pt(2))
+    add_code_block("try (FileReader reader = new FileReader(\"grades.txt\")) {\n    reader.read();\n} catch (FileNotFoundException e) {\n    System.out.println(\"Обробка конкретного винятку FileNotFoundException\");\n} catch (IOException e) {\n    System.out.println(\"Обробка більш загального винятку IOException\");\n} catch (Exception e) {\n    System.out.println(\"Обробка найзагальнішого базового Exception\");\n}")
+    add_p("Пояснення: Блоки catch повинні розташовуватися строго від найбільш специфічних (класи-нащадки) до загальних (базові класи). Якщо поставити базовий Exception першим, він перехопить усі помилки, зробивши наступні блоки недосяжними.", font_size=12, space_after=Pt(6))
 
     add_p("1.5. Демонстрація виконання блоку finally:", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("try {\n    int denominator = 0;\n    int res = 100 / denominator;\n} catch (ArithmeticException e) {\n    System.out.println(e.getMessage());\n} finally {\n    System.out.println(\"Блок finally виконано\");\n}")
-    add_p("Спостереження: Блок finally виконується як у разі виникнення помилки, так і за успішного завершення.", font_size=12, space_after=Pt(10))
+    add_code_block("try {\n    int denominator = 0;\n    int res = 100 / denominator;\n    System.out.println(\"Результат: \" + res);\n} catch (ArithmeticException e) {\n    System.out.println(\"Перехоплено помилку: \" + e.getMessage());\n} finally {\n    System.out.println(\"Блок finally виконано\");\n}")
+    add_p("Пояснення: Блок finally гарантовано виконується як при виникненні винятку, так і при успішному завершенні блоку try, що забезпечує коректне очищення та звільнення ресурсів.", font_size=12, space_after=Pt(10))
 
     # Дослід 2
     add_p("2. Власний виняток InvalidGradeException та збереження причини (Exception Chaining)", font_size=12, bold=True, space_after=Pt(4))
@@ -144,29 +139,29 @@ def create_report(output_path):
 
     add_p("Порівняння двох способів перекидання винятку при розборі некоректного рядка \"abc\":", font_size=12, space_after=Pt(2))
     add_p("Спосіб 1: throw new InvalidGradeException(e.getMessage())", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("exception.InvalidGradeException: For input string: \"abc\"\n\tat service.GradeService.parseGradeWithoutCause(GradeService.java:23)\n\tat app.Main.runTask2(Main.java:90)\n\tat app.Main.main(Main.java:23)")
-    add_p("Спостереження: Причину втрачено. У стектрейсі відсутній тип первинного винятку (NumberFormatException) та місце його виникнення в Integer.parseInt.", font_size=12, space_after=Pt(4))
+    add_code_block("exception.InvalidGradeException: For input string: \"abc\"\n\tat service.GradeService.parseGradeWithoutCause(GradeService.java:26)\n\tat app.Main.runTask2(Main.java:88)\n\tat app.Main.main(Main.java:23)")
+    add_p("Спостереження: Причину втрачено. У стектрейсі відсутній тип первинного винятку (NumberFormatException) та точне місце в стандартній бібліотеці (Integer.parseInt), де стався збій.", font_size=12, space_after=Pt(4))
 
     add_p("Спосіб 2: throw new InvalidGradeException(\"Некоректна оцінка студента\", e)", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("exception.InvalidGradeException: Некоректна оцінка студента: 'abc'\n\tat service.GradeService.parseGradeWithCause(GradeService.java:31)\n\tat app.Main.runTask2(Main.java:101)\n\tat app.Main.main(Main.java:23)\nCaused by: java.lang.NumberFormatException: For input string: \"abc\"\n\tat java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:662)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:778)\n\tat service.GradeService.parseGradeWithCause(GradeService.java:29)\n\t... 2 more")
-    add_p("Спостереження: Причину збережено через блок Caused by із повним технічним стектрейсом першопричини.", font_size=12, space_after=Pt(10))
+    add_code_block("exception.InvalidGradeException: Некоректна оцінка студента: 'abc'\n\tat service.GradeService.parseGradeWithCause(GradeService.java:34)\n\tat app.Main.runTask2(Main.java:100)\n\tat app.Main.main(Main.java:23)\nCaused by: java.lang.NumberFormatException: For input string: \"abc\"\n\tat java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:662)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:778)\n\tat service.GradeService.parseGradeWithCause(GradeService.java:32)\n\t... 2 more")
+    add_p("Спостереження: Причину повністю збережено через блок Caused by. Розробник одночасно бачить зрозуміле прикладне повідомлення і точний технічний рядок першопричини.", font_size=12, space_after=Pt(10))
 
     # Дослід 3
     add_p("3. Робота з файлами: буферизація, try-with-resources та кодування", font_size=12, bold=True, space_after=Pt(4))
     
     add_p("3.1. Запис через BufferedWriter без закриття потоку (без close()):", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8));\nwriter.write(grade.toString());\nwriter.newLine();")
+    add_code_block("BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8));\nfor (StudentGrade grade : grades) {\n    writer.write(grade.toString());\n    writer.newLine();\n}")
     add_p("Результат перевірки: Розмір файлу grades_unclosed.txt на диску складає 0 байт.", font_size=12, italic=True, space_after=Pt(2))
-    add_p("Причина: Дані залишилися у внутрішньому буфері пам'яті (8 КБ) і не були скинуті на диск, оскільки close() або flush() не викликалися.", font_size=12, space_after=Pt(6))
+    add_p("Причина: Символи утримуються у внутрішньому буфері пам'яті (8 КБ) і не записуються на диск без виклику методів close() або flush().", font_size=12, space_after=Pt(6))
 
     add_p("3.2. Запис через try-with-resources:", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {\n    writer.write(grade.toString());\n    writer.newLine();\n}")
+    add_code_block("try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {\n    for (StudentGrade grade : grades) {\n        writer.write(grade.toString());\n        writer.newLine();\n    }\n}")
     add_p("Результат перевірки: Розмір файлу grades_safe.txt на диску складає 99 байт.", font_size=12, italic=True, space_after=Pt(2))
-    add_p("Причина: Конструкція try-with-resources автоматично викликала close(), що забезпечило скидання буфера на диск.", font_size=12, space_after=Pt(6))
+    add_p("Причина: Конструкція try-with-resources гарантовано викликає метод close(), який скидає буфер на диск перед закриттям файлу.", font_size=12, space_after=Pt(6))
 
     add_p("3.3. Вплив кодування при читанні кирилиці (UTF-8 проти windows-1251):", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("Читання з UTF-8:\nІваненко Петро: 95\nПетренко Марія: 88\nСидоренко Олег: 74\n\nЧитання того самого файлу як windows-1251:\nР†РІР°РЅРµРЅРєРѕ РџРµС‚СЂРѕ: 95\nРџРµС‚СЂРµРЅРєРѕ РњР°СЂС–СЏ: 88\nРЎРёРґРѕСЂРµРЅРєРѕ РћР»РµРі: 74")
-    add_p("Пояснення: У UTF-8 символи кирилиці займають по 2 байти. Однобайтне кодування windows-1251 трактує кожен байт окремо, що викликає спотворення тексту.", font_size=12, space_after=Pt(12))
+    add_code_block("Читання з явним кодуванням UTF-8:\nІваненко Петро: 95\nПетренко Марія: 88\nСидоренко Олег: 74\n\nЧитання того самого файлу як windows-1251:\nР†РІР°РЅРµРЅРєРѕ РџРµС‚СЂРѕ: 95\nРџРµС‚СЂРµРЅРєРѕ РњР°СЂС–СЏ: 88\nРЎРёРґРѕСЂРµРЅРєРѕ РћР»РµРі: 74")
+    add_p("Пояснення: У UTF-8 українські літери кодуються двома байтами. При читанні у windows-1251 кожен байт інтерпретується окремо, що призводить до спотворення тексту.", font_size=12, space_after=Pt(12))
 
     # Результати
     add_p("Результати роботи програми", font_size=13, bold=True, space_after=Pt(4))
@@ -197,22 +192,22 @@ def create_report(output_path):
 Повідомлення: For input string: "abc"
 Стектрейс:
 exception.InvalidGradeException: For input string: "abc"
-	at service.GradeService.parseGradeWithoutCause(GradeService.java:23)
-	at app.Main.runTask2(Main.java:90)
+	at service.GradeService.parseGradeWithoutCause(GradeService.java:26)
+	at app.Main.runTask2(Main.java:88)
 	at app.Main.main(Main.java:23)
 
 Дослід 2.2. Перекидання зі збереженням причини:
 Повідомлення: Некоректна оцінка студента: 'abc'
 Стектрейс:
 exception.InvalidGradeException: Некоректна оцінка студента: 'abc'
-	at service.GradeService.parseGradeWithCause(GradeService.java:31)
-	at app.Main.runTask2(Main.java:101)
+	at service.GradeService.parseGradeWithCause(GradeService.java:34)
+	at app.Main.runTask2(Main.java:100)
 	at app.Main.main(Main.java:23)
 Caused by: java.lang.NumberFormatException: For input string: "abc"
 	at java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)
 	at java.base/java.lang.Integer.parseInt(Integer.java:662)
 	at java.base/java.lang.Integer.parseInt(Integer.java:778)
-	at service.GradeService.parseGradeWithCause(GradeService.java:29)
+	at service.GradeService.parseGradeWithCause(GradeService.java:32)
 	... 2 more
 
 Завдання 3. Робота з файлами, буферизація та кодування
@@ -240,7 +235,7 @@ Caused by: java.lang.NumberFormatException: For input string: "abc"
          "Перевірювані винятки (Checked, успадковані від Exception крім RuntimeException) перевіряються компілятором і вимагають обов'язкової обробки (try-catch або throws). Вони доречні для передбачуваних зовнішніх помилок середовища (відсутність файлу, мережевий збій), від яких програма може відновитися. Неперевірювані (Unchecked, нащадки RuntimeException) сигналізують про помилки розробника (ділення на нуль, вихід за межі масиву, NullPointerException); вони не вимагають примусового декларування і зазвичай свідчать про баг у коді."),
         
         ("2. Чому порядок блоків catch має значення?",
-         "Тому що винятки перевіряються зверху вниз за ієрархією наслідування до першого збігу. Якщо вище розмістити більш загальний клас (наприклад, catch (Exception e)), він перехопить абсолютно всі винятки, роблячи розташовані нижче спеціалізовані блоки (наприклад, catch (IOException e)) недосяжними, що призводить до помилки компіляції: exception has already been caught."),
+         "Тому що винятки перевіряються зверху вниз за ієрархією наслідування до першого збігу. Якщо вище розмістити більш загальний клас (наприклад, catch (Exception e)), він перехопить абсолютно всі винятки, роблячи розташовані нижче спеціалізовані блоки (наприклад, catch (IOException e)) недосяжними, що призводить до помилки компіляції."),
         
         ("3. Що втрачається, якщо перекинути виняток лише з повідомленням попереднього?",
          "Втрачається точний тип первинного винятку (наприклад, NumberFormatException) і його оригінальний стектрейс із номером рядка та назвою методу, де саме стався збій. При збереженні причини через конструктор із параметром cause виняток містить секцію Caused by, що дозволяє відстежити повний ланцюжок виникнення проблеми."),

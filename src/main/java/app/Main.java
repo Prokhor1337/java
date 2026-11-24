@@ -24,14 +24,13 @@ public class Main {
         runTask3(gradeService);
     }
 
-    @SuppressWarnings({"resource", "ResultOfMethodCallIgnored"})
     private static void runTask1(GradeService gradeService) {
         System.out.println("Завдання 1. Дослідження перевірюваних і неперевірюваних винятків");
 
         System.out.println("Дослід 1.1. Перевірюваний виняток (Checked Exception) з try-catch:");
-        try {
-            FileReader reader = new FileReader("non_existing_file.txt");
-            reader.read();
+        try (FileReader reader = new FileReader("non_existing_file.txt")) {
+            int charCode = reader.read();
+            System.out.println("Прочитано символ: " + charCode);
         } catch (FileNotFoundException e) {
             System.out.println("Перехоплено FileNotFoundException: " + e.getMessage());
         } catch (IOException e) {
@@ -63,7 +62,6 @@ public class Main {
         testFinallyBlock(false);
     }
 
-    @SuppressWarnings("NumericOverflow")
     private static void testFinallyBlock(boolean causeError) {
         try {
             System.out.println("Початок виконання блоку try");
@@ -87,7 +85,8 @@ public class Main {
 
         System.out.println("Дослід 2.1. Перекидання без збереження причини:");
         try {
-            gradeService.parseGradeWithoutCause(invalidInput);
+            int parsedGrade = gradeService.parseGradeWithoutCause(invalidInput);
+            System.out.println("Отримано оцінку: " + parsedGrade);
         } catch (InvalidGradeException e) {
             System.out.println("Повідомлення: " + e.getMessage());
             System.out.println("Стектрейс:");
@@ -98,7 +97,8 @@ public class Main {
 
         System.out.println("\nДослід 2.2. Перекидання зі збереженням причини:");
         try {
-            gradeService.parseGradeWithCause(invalidInput);
+            int parsedGrade = gradeService.parseGradeWithCause(invalidInput);
+            System.out.println("Отримано оцінку: " + parsedGrade);
         } catch (InvalidGradeException e) {
             System.out.println("Повідомлення: " + e.getMessage());
             System.out.println("Стектрейс:");

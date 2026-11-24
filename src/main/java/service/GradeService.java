@@ -11,9 +11,12 @@ import java.util.List;
 
 public class GradeService {
 
-    @SuppressWarnings("resource")
     public void openGradeFileWithThrows(String fileName) throws FileNotFoundException {
-        new FileReader(fileName);
+        FileReader reader = new FileReader(fileName);
+        try {
+            reader.close();
+        } catch (IOException ignored) {
+        }
     }
 
     public int parseGradeWithoutCause(String input) throws InvalidGradeException {
@@ -32,7 +35,6 @@ public class GradeService {
         }
     }
 
-    @SuppressWarnings("resource")
     public File writeGradesUnclosed(List<StudentGrade> grades, String fileName) throws IOException {
         File file = new File(fileName);
         BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8));
