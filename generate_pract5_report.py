@@ -121,9 +121,9 @@ def create_report(output_path):
     add_code_block("try {\n    int[] sampleGrades = {95, 88, 74};\n    int invalidIndex = sampleGrades.length + 2;\n    int invalidAccess = sampleGrades[invalidIndex];\n    System.out.println(\"Оцінка: \" + invalidAccess);\n} catch (ArrayIndexOutOfBoundsException e) {\n    System.out.println(\"Перехоплено ArrayIndexOutOfBoundsException: \" + e.getMessage());\n}")
     add_p("Пояснення: ArrayIndexOutOfBoundsException успадкований від RuntimeException і є неперевірюваним. Компілятор не вимагає обов'язкового блоку try-catch чи throws, проте за некоректних даних помилка виникає під час виконання програми.", font_size=12, space_after=Pt(6))
 
-    add_p("1.4. Правильний порядок розміщення блоків catch:", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("try (FileReader reader = new FileReader(\"grades.txt\")) {\n    reader.read();\n} catch (FileNotFoundException e) {\n    System.out.println(\"Обробка конкретного винятку FileNotFoundException\");\n} catch (IOException e) {\n    System.out.println(\"Обробка більш загального винятку IOException\");\n} catch (Exception e) {\n    System.out.println(\"Обробка найзагальнішого базового Exception\");\n}")
-    add_p("Пояснення: Блоки catch повинні розташовуватися строго від найбільш специфічних (класи-нащадки) до загальних (базові класи). Якщо поставити базовий Exception першим, він перехопить усі помилки, зробивши наступні блоки недосяжними.", font_size=12, space_after=Pt(6))
+    add_p("1.4. Правильний порядок розміщення блоків catch у коді Main.java (рядки 57–67):", font_size=12, bold=True, space_after=Pt(2))
+    add_code_block("try (FileReader reader = new FileReader(\"non_existing_file.txt\")) {\n    int charCode = reader.read();\n    System.out.println(\"Прочитано символ: \" + charCode);\n} catch (FileNotFoundException e) {\n    System.out.println(\"Обробка конкретного винятку FileNotFoundException: \" + e.getMessage());\n} catch (IOException e) {\n    System.out.println(\"Обробка більш загального винятку IOException: \" + e.getMessage());\n} catch (Exception e) {\n    System.out.println(\"Обробка найзагальнішого базового Exception: \" + e.getMessage());\n}")
+    add_p("Пояснення: Блоки catch розташовуються строго від найбільш специфічних (класи-нащадки) до загальних (базові класи). Якщо поставити базовий Exception першим, він перехопить усі помилки, зробивши наступні блоки недосяжними.", font_size=12, space_after=Pt(6))
 
     add_p("1.5. Демонстрація виконання блоку finally:", font_size=12, bold=True, space_after=Pt(2))
     add_code_block("try {\n    int denominator = 0;\n    int res = 100 / denominator;\n    System.out.println(\"Результат: \" + res);\n} catch (ArithmeticException e) {\n    System.out.println(\"Перехоплено помилку: \" + e.getMessage());\n} finally {\n    System.out.println(\"Блок finally виконано\");\n}")
@@ -139,11 +139,11 @@ def create_report(output_path):
 
     add_p("Порівняння двох способів перекидання винятку при розборі некоректного рядка \"abc\":", font_size=12, space_after=Pt(2))
     add_p("Спосіб 1: throw new InvalidGradeException(e.getMessage())", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("exception.InvalidGradeException: For input string: \"abc\"\n\tat service.GradeService.parseGradeWithoutCause(GradeService.java:26)\n\tat app.Main.runTask2(Main.java:88)\n\tat app.Main.main(Main.java:23)")
+    add_code_block("exception.InvalidGradeException: For input string: \"abc\"\n\tat service.GradeService.parseGradeWithoutCause(GradeService.java:26)\n\tat app.Main.runTask2(Main.java:100)\n\tat app.Main.main(Main.java:23)")
     add_p("Спостереження: Причину втрачено. У стектрейсі відсутній тип первинного винятку (NumberFormatException) та точне місце в стандартній бібліотеці (Integer.parseInt), де стався збій.", font_size=12, space_after=Pt(4))
 
     add_p("Спосіб 2: throw new InvalidGradeException(\"Некоректна оцінка студента\", e)", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("exception.InvalidGradeException: Некоректна оцінка студента: 'abc'\n\tat service.GradeService.parseGradeWithCause(GradeService.java:34)\n\tat app.Main.runTask2(Main.java:100)\n\tat app.Main.main(Main.java:23)\nCaused by: java.lang.NumberFormatException: For input string: \"abc\"\n\tat java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:662)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:778)\n\tat service.GradeService.parseGradeWithCause(GradeService.java:32)\n\t... 2 more")
+    add_code_block("exception.InvalidGradeException: Некоректна оцінка студента: 'abc'\n\tat service.GradeService.parseGradeWithCause(GradeService.java:34)\n\tat app.Main.runTask2(Main.java:112)\n\tat app.Main.main(Main.java:23)\nCaused by: java.lang.NumberFormatException: For input string: \"abc\"\n\tat java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:662)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:778)\n\tat service.GradeService.parseGradeWithCause(GradeService.java:32)\n\t... 2 more")
     add_p("Спостереження: Причину повністю збережено через блок Caused by. Розробник одночасно бачить зрозуміле прикладне повідомлення і точний технічний рядок першопричини.", font_size=12, space_after=Pt(10))
 
     # Дослід 3
@@ -177,7 +177,10 @@ def create_report(output_path):
 Дослід 1.3. Неперевірюваний виняток (Unchecked / RuntimeException):
 Перехоплено ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 3
 
-Дослід 1.4. Демонстрація блоку finally:
+Дослід 1.4. Правильний порядок розміщення блоків catch:
+Обробка конкретного винятку FileNotFoundException: non_existing_file.txt (The system cannot find the file specified)
+
+Дослід 1.5. Демонстрація блоку finally:
 1) Випадок з помилкою:
 Початок виконання блоку try
 Перехоплено помилку: / by zero
@@ -193,7 +196,7 @@ def create_report(output_path):
 Стектрейс:
 exception.InvalidGradeException: For input string: "abc"
 	at service.GradeService.parseGradeWithoutCause(GradeService.java:26)
-	at app.Main.runTask2(Main.java:88)
+	at app.Main.runTask2(Main.java:100)
 	at app.Main.main(Main.java:23)
 
 Дослід 2.2. Перекидання зі збереженням причини:
@@ -201,7 +204,7 @@ exception.InvalidGradeException: For input string: "abc"
 Стектрейс:
 exception.InvalidGradeException: Некоректна оцінка студента: 'abc'
 	at service.GradeService.parseGradeWithCause(GradeService.java:34)
-	at app.Main.runTask2(Main.java:100)
+	at app.Main.runTask2(Main.java:112)
 	at app.Main.main(Main.java:23)
 Caused by: java.lang.NumberFormatException: For input string: "abc"
 	at java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)

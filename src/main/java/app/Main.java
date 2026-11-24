@@ -54,7 +54,19 @@ public class Main {
             System.out.println("Перехоплено ArrayIndexOutOfBoundsException: " + e.getMessage());
         }
 
-        System.out.println("\nДослід 1.4. Демонстрація блоку finally:");
+        System.out.println("\nДослід 1.4. Правильний порядок розміщення блоків catch:");
+        try (FileReader reader = new FileReader("non_existing_file.txt")) {
+            int charCode = reader.read();
+            System.out.println("Прочитано символ: " + charCode);
+        } catch (FileNotFoundException e) {
+            System.out.println("Обробка конкретного винятку FileNotFoundException: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Обробка більш загального винятку IOException: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Обробка найзагальнішого базового Exception: " + e.getMessage());
+        }
+
+        System.out.println("\nДослід 1.5. Демонстрація блоку finally:");
         System.out.println("1) Випадок з помилкою:");
         testFinallyBlock(true);
 
