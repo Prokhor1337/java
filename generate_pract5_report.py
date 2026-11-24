@@ -143,13 +143,16 @@ def create_report(output_path):
     add_p("Клас власного винятку з підтримкою збереження першопричини (Throwable cause):", font_size=12, space_after=Pt(2))
     add_code_block("package exception;\n\npublic class InvalidGradeException extends Exception {\n    public InvalidGradeException(String message) {\n        super(message);\n    }\n    public InvalidGradeException(String message, Throwable cause) {\n        super(message, cause);\n    }\n}")
 
+    add_p("Парсинг оцінки реалізовано у класі сервісу service.GradeService:", font_size=12, space_after=Pt(2))
+    add_code_block("// Без збереження причини:\npublic int parseGradeWithoutCause(String input) throws InvalidGradeException {\n    try {\n        return Integer.parseInt(input);\n    } catch (NumberFormatException e) {\n        throw new InvalidGradeException(e.getMessage());\n    }\n}\n\n// Зі збереженням причини (Exception Chaining):\npublic int parseGradeWithCause(String input) throws InvalidGradeException {\n    try {\n        return Integer.parseInt(input);\n    } catch (NumberFormatException e) {\n        throw new InvalidGradeException(\"Некоректна оцінка студента: '\" + input + \"'\", e);\n    }\n}")
+
     add_p("Порівняння двох способів перекидання винятку при розборі некоректного рядка \"abc\":", font_size=12, space_after=Pt(2))
     add_p("Спосіб 1: throw new InvalidGradeException(e.getMessage())", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("exception.InvalidGradeException: For input string: \"abc\"\n\tat app.Main.parseGradeWithoutCause(Main.java:131)\n\tat app.Main.runTask2Experiments(Main.java:104)\n\tat app.Main.main(Main.java:20)")
+    add_code_block("exception.InvalidGradeException: For input string: \"abc\"\n\tat service.GradeService.parseGradeWithoutCause(GradeService.java:26)\n\tat app.Main.runTask2(Main.java:105)\n\tat app.Main.main(Main.java:26)")
     add_p("Спостереження: Причину втрачено. У стектрейсі відсутній тип первинного винятку (NumberFormatException) та точне місце в стандартній бібліотеці (Integer.parseInt), де виник збій.", font_size=12, space_after=Pt(4))
 
     add_p("Спосіб 2: throw new InvalidGradeException(\"Некоректна оцінка студента\", e)", font_size=12, bold=True, space_after=Pt(2))
-    add_code_block("exception.InvalidGradeException: Некоректна оцінка студента: 'abc'\n\tat app.Main.parseGradeWithCause(Main.java:140)\n\tat app.Main.runTask2Experiments(Main.java:116)\n\tat app.Main.main(Main.java:20)\nCaused by: java.lang.NumberFormatException: For input string: \"abc\"\n\tat java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:662)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:778)\n\tat app.Main.parseGradeWithCause(Main.java:137)\n\t... 2 more")
+    add_code_block("exception.InvalidGradeException: Некоректна оцінка студента: 'abc'\n\tat service.GradeService.parseGradeWithCause(GradeService.java:36)\n\tat app.Main.runTask2(Main.java:117)\n\tat app.Main.main(Main.java:26)\nCaused by: java.lang.NumberFormatException: For input string: \"abc\"\n\tat java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:662)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:778)\n\tat service.GradeService.parseGradeWithCause(GradeService.java:33)\n\t... 2 more")
     add_p("Спостереження: Причину повністю збережено через блок Caused by. Розробник одночасно бачить високорівневий доменний контекст (\"Некоректна оцінка\") і точний технічний рядок першопричини (Integer.parseInt).", font_size=12, space_after=Pt(10))
 
     # --- ДОСЛІД 3 ---
@@ -208,13 +211,15 @@ def create_report(output_path):
 -> Повідомлення: For input string: "abc"
 -> Стектрейс (причину NumberFormatException та її місце втрачено):
 exception.InvalidGradeException: For input string: "abc"
-	at app.Main.parseGradeWithoutCause(Main.java:131)
+	at service.GradeService.parseGradeWithoutCause(GradeService.java:26)
+	at app.Main.runTask2(Main.java:105)
 
 [Дослід 2.2] Перекидання ЗІ збереженням причини (throw new InvalidGradeException("...", e)):
 -> Повідомлення: Некоректна оцінка студента: 'abc'
 -> Стектрейс (присутній Caused by: NumberFormatException):
 exception.InvalidGradeException: Некоректна оцінка студента: 'abc'
-	at app.Main.parseGradeWithCause(Main.java:140)
+	at service.GradeService.parseGradeWithCause(GradeService.java:36)
+	at app.Main.runTask2(Main.java:117)
 Caused by: java.lang.NumberFormatException: For input string: "abc"
 	at java.base/java.lang.Integer.parseInt(Integer.java:662)
 
